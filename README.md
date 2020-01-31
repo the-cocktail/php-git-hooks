@@ -1,4 +1,4 @@
-# Universal PHPCS git pre-commit hook 
+# Git Hooks para proyectos PHP 
 
 ## About
 
@@ -9,15 +9,15 @@ Inspired by [Enforce code standards with composer, git hooks, and phpcs](http://
 
 ## Installation
 
-Install `wickedreports/phpcs-pre-commit-hook` with composer require command:
+Install `the-cocktail/php-git-hooks` with composer require command:
 
-    composer require "wickedreports/phpcs-pre-commit-hook"
+    composer require --dev "the-cocktail/php-git-hooks"
 
-Or alternatively, include a dependency for `wickedreports/phpcs-pre-commit-hook` in your composer.json file manually:
+Or alternatively, include a dependency for `the-cocktail/php-git-hooks` in your composer.json file manually:
 
     {
         "require-dev": {
-            "wickedreports/phpcs-pre-commit-hook": "*"
+            "the-cocktail/php-git-hooks": "*"
         }
     }
 

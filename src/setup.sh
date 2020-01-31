@@ -11,12 +11,15 @@ if [ ! -d .git/hooks ]; then
   mkdir -p .git/hooks
 fi
 
-cp vendor/wickedreports/phpcs-pre-commit-hook/src/pre-commit .git/hooks/pre-commit
+cp vendor/the-cocktail/php-git-hooks/src/pre-commit .git/hooks/pre-commit
+cp vendor/the-cocktail/php-git-hooks/src/pre-push .git/hooks/pre-push
+
 chmod +x .git/hooks/pre-commit
+chmod +x .git/hooks/pre-push
 
 if [ "$PRE_COMMIT_EXISTS" = 0 ];
 then
-    echo "Pre-commit git hook is installed!"
+    echo "Pre-commit and Pre-push git hooks are installed!"
 else
-    echo "Pre-commit git hook is updated!"
+    echo "Pre-commit and Pre-push git hooks are updated!"
 fi

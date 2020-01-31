@@ -1,12 +1,12 @@
 {
-    "name": "wickedreports/phpcs-pre-commit-hook",
-    "description": "PHPCS check before commit",
+    "name": "the-cocktail/php-git-hooks",
+    "description": "PHPCS check before commit, PHPUnit and PHPStan before push",
     "type": "scripts",
     "license": "GPL-3.0",
     "authors": [
         {
-            "name": "Stanislav Malkin",
-            "email": "stan@wickedreports.com"
+            "name": "The cocktail",
+            "email": "info@the-cocktail.com"
         }
     ],
     "autoload": {
