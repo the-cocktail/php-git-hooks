@@ -13,12 +13,12 @@ Inspired by [Enforce code standards with composer, git hooks, and phpcs](http://
 
 **Docker** & **Docker compose** the hooks execute checkings inside the php container
 
-.env file on root 
+**.env** file in project root 
 
 The hook uses default name "app" for the php container if you want to use other name add it to your .env file:
 
     
-        SERVICE_PHP_NAME=app
+    SERVICE_PHP_NAME=app
     
 
 ## Installation
