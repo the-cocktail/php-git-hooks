@@ -1,11 +1,25 @@
-# Git Hooks para proyectos PHP 
+# Git Hooks for PHP Projects 
 
 ## About
 
-Auto installed git pre-commit hook for running [PHP Code Sniffer](https://github.com/squizlabs/PHP_CodeSniffer)
-code checking to PSR2 coding standard compliance. It checks only files that are to be committed.
+Auto installed git pre-commit hook for running [PHP Code Sniffer](https://github.com/squizlabs/PHP_CodeSniffer) 
+code checking to PSR2 coding standard compliance and [PHPStan](https://github.com/phpstan/phpstan) to discover bugs on code. 
+
+**It checks only files that are to be committed.**
 
 Inspired by [Enforce code standards with composer, git hooks, and phpcs](http://tech.zumba.com/2014/04/14/control-code-quality/) and https://github.com/smgladkovskiy/phpcs-git-pre-commit and https://gist.github.com/BrizzleRocker/62ed61b37acf05344d4bce894e719251 . Installer checks OS on hosting machine and installs needed hooks for platform.
+
+## Prerequisites
+
+**Docker** & **Docker compose** the hooks execute checkings inside the php container
+
+.env file on root 
+
+The hook uses default name "app" for the php container if you want to use other name add it to your .env file:
+
+    ```
+        SERVICE_PHP_NAME=app
+    ```
 
 ## Installation
 
@@ -36,6 +50,10 @@ Then run `composer install` or `composer update`. `pre-commit` hook will be inst
 
 ## Usage
 
-Run `git commit` and pre-commit hook will check your committed files like if you run
+Run `git commit` and pre-commit hook will check lint, PSR-2 coding standard compliance and phpstan
 
-    php phpcs.phar --standard=PSR2 --colors --encoding=utf-8 -n -p /path/to/file.php
+Use phpstan.neon.dist file to alter phpstan levels
+
+You can commit without start docker containers; the hook detect it and ask if you want to commit without check the code.
+
+

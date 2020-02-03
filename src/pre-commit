@@ -2,7 +2,8 @@
 
 exec < /dev/tty
 
-STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\\\.php`
+PROJECT=`php -r "echo dirname(dirname(dirname(realpath('$0'))));"`
+STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\\\.(php|twig) `
 
 # Determine if a file list is passed
 if [ "$#" -eq 1 ]
@@ -15,31 +16,36 @@ then
 fi
 SFILES=${SFILES:-$STAGED_FILES_CMD}
 
-SERVICE_NAME="app"
+SERVICE_PHP_NAME=$(grep SERVICE_PHP_NAME .env | xargs)
+SERVICE_PHP_NAME=${SERVICE_PHP_NAME#*=}
+if [ "$SERVICE_PHP_NAME" = "" ]; then
+    SERVICE_PHP_NAME="app"
+fi
 
-if [ `docker ps -q --no-trunc | grep $(docker-compose ps -q $SERVICE_NAME)` ]; then
+if [ `docker ps -q --no-trunc | grep $(docker-compose ps -q $SERVICE_PHP_NAME)` ]; then
 
     echo "Checking PHP Lint..."
     for FILE in $SFILES
     do
-        docker-compose exec -T $SERVICE_NAME php -l -d display_errors=0 $FILE
+        docker-compose exec -T $SERVICE_PHP_NAME php -l -d display_errors=0 $FILE
         if [ $? != 0 ]
         then
             echo "Fix the error before commit."
             exit 1
         fi
+    #    FILES="$FILES $PROJECT/$FILE"
     done
 
 
     if [ "$SFILES" != "" ]
     then
         echo "Running Code Sniffer. Code standard PSR2."
-        docker-compose exec -T $SERVICE_NAME bin/phpcs --standard=PSR2 --colors --encoding=utf-8 -n -p $SFILES
+        docker-compose exec -T $SERVICE_PHP_NAME bin/phpcs --standard=PSR2 --colors --encoding=utf-8 -n -p $SFILES
         if [ $? != 0 ]
         then
             echo "Fix the error before commit!"
             echo "Run"
-            echo "  ./bin/phpcbf --standard=PSR2 $SFILES"
+            echo "docker-compose exec -T $SERVICE_PHP_NAME bin/phpcs --standard=PSR2 --colors --encoding=utf-8 -n -p $SFILES"
             echo "for automatic fix or fix it manually."
             exit 1
         fi
@@ -48,12 +54,12 @@ if [ `docker ps -q --no-trunc | grep $(docker-compose ps -q $SERVICE_NAME)` ]; t
     if [ "$SFILES" != "" ]
     then
         echo "Running PHPStan."
-        docker-compose exec -T $SERVICE_NAME bin/phpstan analyse --configuration=phpstan.neon.dist --error-format=raw --autoload-file=vendor/autoload.php $SFILES
+        docker-compose exec -T $SERVICE_PHP_NAME bin/phpstan analyse --configuration=phpstan.neon.dist --error-format=raw --autoload-file=vendor/autoload.php $SFILES
         if [ $? != 0 ]
         then
             echo "Fix the error before commit!"
             echo "Run"
-            echo "  ./bin/phpstan analyse --configuration=phpstan.neon.dist --autoload-file=vendor/autoload.php $SFILES"
+            echo "docker-compose exec -T $SERVICE_PHP_NAME bin/phpstan analyse --configuration=phpstan.neon.dist --error-format=raw --autoload-file=vendor/autoload.php $SFILES"
             echo "for automatic fix or fix it manually."
             exit 1
         fi
