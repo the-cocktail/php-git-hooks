@@ -17,9 +17,9 @@ Inspired by [Enforce code standards with composer, git hooks, and phpcs](http://
 
 The hook uses default name "app" for the php container if you want to use other name add it to your .env file:
 
-    `
+    
         SERVICE_PHP_NAME=app
-    `
+    
 
 ## Installation
 
