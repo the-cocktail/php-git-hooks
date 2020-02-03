@@ -1,6 +1,7 @@
 #!/bin/sh
 
-PROJECT=`php -r "echo dirname(dirname(dirname(realpath('$0'))));"`
+exec < /dev/tty
+
 STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\\\.php`
 
 # Determine if a file list is passed
@@ -14,30 +15,59 @@ then
 fi
 SFILES=${SFILES:-$STAGED_FILES_CMD}
 
-echo "Checking PHP Lint..."
-for FILE in $SFILES
-do
-    php -l -d display_errors=0 $PROJECT/$FILE
-    if [ $? != 0 ]
-    then
-        echo "Fix the error before commit."
-        exit 1
-    fi
-    FILES="$FILES $PROJECT/$FILE"
-done
+SERVICE_NAME="app"
 
-if [ "$FILES" != "" ]
-then
-    echo "Running Code Sniffer. Code standard PSR2."
-    ./bin/phpcs --standard=PSR2 --colors --encoding=utf-8 -n -p $FILES
-    if [ $? != 0 ]
+if [ `docker ps -q --no-trunc | grep $(docker-compose ps -q $SERVICE_NAME)` ]; then
+
+    echo "Checking PHP Lint..."
+    for FILE in $SFILES
+    do
+        docker-compose exec -T $SERVICE_NAME php -l -d display_errors=0 $FILE
+        if [ $? != 0 ]
+        then
+            echo "Fix the error before commit."
+            exit 1
+        fi
+    done
+
+
+    if [ "$SFILES" != "" ]
     then
-        echo "Fix the error before commit!"
-        echo "Run"
-        echo "  ./bin/phpcbf --standard=PSR2 $FILES"
-        echo "for automatic fix or fix it manually."
+        echo "Running Code Sniffer. Code standard PSR2."
+        docker-compose exec -T $SERVICE_NAME bin/phpcs --standard=PSR2 --colors --encoding=utf-8 -n -p $SFILES
+        if [ $? != 0 ]
+        then
+            echo "Fix the error before commit!"
+            echo "Run"
+            echo "  ./bin/phpcbf --standard=PSR2 $SFILES"
+            echo "for automatic fix or fix it manually."
+            exit 1
+        fi
+    fi
+
+    if [ "$SFILES" != "" ]
+    then
+        echo "Running PHPStan."
+        docker-compose exec -T $SERVICE_NAME bin/phpstan analyse --configuration=phpstan.neon.dist --error-format=raw --autoload-file=vendor/autoload.php $SFILES
+        if [ $? != 0 ]
+        then
+            echo "Fix the error before commit!"
+            echo "Run"
+            echo "  ./bin/phpstan analyse --configuration=phpstan.neon.dist --autoload-file=vendor/autoload.php $SFILES"
+            echo "for automatic fix or fix it manually."
+            exit 1
+        fi
+    fi
+
+else
+
+    read -p "No docker up; commit without test php? [y/n](n):" proceed
+
+    if [ "$proceed" != "y" ]; then
+        echo "Commit stopped"
         exit 1
     fi
+
 fi
 
 exit $?

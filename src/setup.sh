@@ -12,14 +12,12 @@ if [ ! -d .git/hooks ]; then
 fi
 
 cp vendor/the-cocktail/php-git-hooks/src/pre-commit .git/hooks/pre-commit
-cp vendor/the-cocktail/php-git-hooks/src/pre-push .git/hooks/pre-push
 
 chmod +x .git/hooks/pre-commit
-chmod +x .git/hooks/pre-push
 
 if [ "$PRE_COMMIT_EXISTS" = 0 ];
 then
-    echo "Pre-commit and Pre-push git hooks are installed!"
+    echo "Pre-commit git hook is installed!"
 else
-    echo "Pre-commit and Pre-push git hooks are updated!"
+    echo "Pre-commit git hook is updated!"
 fi
