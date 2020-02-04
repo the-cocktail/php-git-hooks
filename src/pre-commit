@@ -4,6 +4,7 @@ exec < /dev/tty
 
 PROJECT=`php -r "echo dirname(dirname(dirname(realpath('$0'))));"`
 STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\\\.(php|twig) `
+BIN_DIR=`composer config bin-dir 2>&1 | tail -1`
 
 # Determine if a file list is passed
 if [ "$#" -eq 1 ]
@@ -37,29 +38,29 @@ if [ `docker ps -q --no-trunc | grep $(docker-compose ps -q $SERVICE_PHP_NAME)` 
     done
 
 
-    if [ "$SFILES" != "" ]
+    if [ "$SFILES" != "" ] && [ -f "$BIN_DIR/phpcs" ]
     then
         echo "Running Code Sniffer. Code standard PSR2."
-        docker-compose exec -T $SERVICE_PHP_NAME bin/phpcs --standard=PSR2 --colors --encoding=utf-8 -n -p $SFILES
+        docker-compose exec -T $SERVICE_PHP_NAME $BIN_DIR/phpcs --standard=PSR2 --colors --encoding=utf-8 -n -p $SFILES
         if [ $? != 0 ]
         then
             echo "Fix the error before commit!"
             echo "Run"
-            echo "docker-compose exec -T $SERVICE_PHP_NAME bin/phpcs --standard=PSR2 --colors --encoding=utf-8 -n -p $SFILES"
+            echo "docker-compose exec -T $SERVICE_PHP_NAME $BIN_DIR/phpcs --standard=PSR2 --colors --encoding=utf-8 -n -p $SFILES"
             echo "for automatic fix or fix it manually."
             exit 1
         fi
     fi
 
-    if [ "$SFILES" != "" ]
+    if [ "$SFILES" != "" ] && [ -f "$BIN_DIR/phpstan" ]
     then
         echo "Running PHPStan."
-        docker-compose exec -T $SERVICE_PHP_NAME bin/phpstan analyse --configuration=phpstan.neon.dist --error-format=raw --autoload-file=vendor/autoload.php $SFILES
+        docker-compose exec -T $SERVICE_PHP_NAME $BIN_DIR/phpstan analyse --configuration=phpstan.neon.dist --error-format=raw --autoload-file=vendor/autoload.php $SFILES
         if [ $? != 0 ]
         then
             echo "Fix the error before commit!"
             echo "Run"
-            echo "docker-compose exec -T $SERVICE_PHP_NAME bin/phpstan analyse --configuration=phpstan.neon.dist --error-format=raw --autoload-file=vendor/autoload.php $SFILES"
+            echo "docker-compose exec -T $SERVICE_PHP_NAME $BIN_DIR/phpstan analyse --configuration=phpstan.neon.dist --error-format=raw --autoload-file=vendor/autoload.php $SFILES"
             echo "for automatic fix or fix it manually."
             exit 1
         fi
