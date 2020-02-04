@@ -23,6 +23,15 @@ The hook uses default name "app" for the php container if you want to use other 
 
 ## Installation
 
+Add the repository to your composer:
+
+    "repositories": [
+            {
+                "type": "vcs",
+                "url": "https://github.com/the-cocktail/ie-eventos"
+            }
+        ],
+
 Install `the-cocktail/php-git-hooks` with composer require command:
 
     composer require --dev "the-cocktail/php-git-hooks"
@@ -48,11 +57,11 @@ To enable code sniff, аdd to `post-install-cmd` and `post-update-cmd` in `compo
 
 Then run `composer install` or `composer update`. `pre-commit` hook will be installed or updated if it already exists.
 
+Follow composer suggests to configure your development environment.
+
 ## Usage
 
-Run `git commit` and pre-commit hook will check lint, PSR-2 coding standard compliance and phpstan
-
-Use phpstan.neon.dist file to alter phpstan levels
+Run `git commit` and pre-commit hook will check lint, PSR-2 coding standard compliance and phpstan if installed
 
 You can commit without start docker containers; the hook detect it and ask if you want to commit without check the code.
 

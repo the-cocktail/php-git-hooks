@@ -14,12 +14,14 @@
             "PHPCodeChecker\\": "src/"
         }
     },
-    "require": {
-        "squizlabs/php_codesniffer": "3.*",
-        "phpstan/phpstan": "^0.12.8",
-        "phpstan/phpstan-deprecation-rules": "^0.12.2",
-        "phpstan/phpstan-doctrine": "^0.12.9",
-        "phpstan/phpstan-phpunit": "^0.12.6",
-        "phpstan/phpstan-symfony": "^0.12.4"
+    "suggest": {
+        "squizlabs/php_codesniffer": "PHP CodeSniffer",
+        "phpstan/phpstan": "PHP Static Analysis Tool",
+        "phpstan/phpstan-deprecation-rules": "Rules for detecting usage of deprecated classes, methods, properties, constants and traits with PHPStan",
+        "phpstan/phpstan-doctrine": "Doctrine extensions for PHPStan",
+        "phpstan/phpstan-phpunit": "PHPUnit extensions and rules for PHPStan",
+        "phpstan/phpstan-symfony": "Symfony extension for PHPStan",
+        "phpstan/phpstan-drupal": "Extension for PHPStan to allow analysis of Drupal code",
+        "nunomaduro/larastan": "Laravel extension for PHPStan"
     }
 }
