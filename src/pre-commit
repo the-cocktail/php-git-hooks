@@ -4,7 +4,6 @@ exec < /dev/tty
 
 PROJECT=`php -r "echo dirname(dirname(dirname(realpath('$0'))));"`
 STAGED_FILES_CMD=`git diff --cached --name-only --diff-filter=ACMR HEAD | grep \\\\.(php|twig) `
-BIN_DIR=`composer config bin-dir 2>&1 | tail -1`
 
 # Determine if a file list is passed
 if [ "$#" -eq 1 ]
@@ -25,6 +24,8 @@ fi
 
 if [ `docker ps -q --no-trunc | grep $(docker-compose ps -q $SERVICE_PHP_NAME)` ]; then
 
+    BIN_DIR=`docker-compose exec -T $SERVICE_PHP_NAME composer config bin-dir 2>&1 | tail -1`
+    
     echo "Checking PHP Lint..."
     for FILE in $SFILES
     do
