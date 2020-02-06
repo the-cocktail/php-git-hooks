@@ -32,10 +32,13 @@ if [ `docker ps -q --no-trunc | grep $(docker-compose ps -q $SERVICE_PHP_NAME)` 
         docker-compose exec -T $SERVICE_PHP_NAME php -l -d display_errors=0 $FILE
         if [ $? != 0 ]
         then
-            echo "Fix the error before commit."
+            echo "\nFix the error before commit!!! \n"
+            echo "          ヽ(ಠ▃ಠ)ﾉ        "
+            echo "\n ****************************************************"
+            echo " * PLEASE, CONFIGURE YOUR IDE TO CHECK LINT ヽ(ಠ▃ಠ)ﾉ *"
+            echo " ****************************************************\n"
             exit 1
         fi
-    #    FILES="$FILES $PROJECT/$FILE"
     done
 
 
@@ -45,10 +48,8 @@ if [ `docker ps -q --no-trunc | grep $(docker-compose ps -q $SERVICE_PHP_NAME)` 
         docker-compose exec -T $SERVICE_PHP_NAME $BIN_DIR/phpcs --standard=PSR2 --colors --encoding=utf-8 -n -p $SFILES
         if [ $? != 0 ]
         then
-            echo "Fix the error before commit!"
-            echo "Run"
-            echo "docker-compose exec -T $SERVICE_PHP_NAME $BIN_DIR/phpcs --standard=PSR2 --colors --encoding=utf-8 -n -p $SFILES"
-            echo "for automatic fix or fix it manually."
+            echo "\nFix the error before commit! \n"
+            echo "     ¯_( ͠° ͟ʖ °͠ )_/¯"
             exit 1
         fi
     fi
@@ -59,10 +60,9 @@ if [ `docker ps -q --no-trunc | grep $(docker-compose ps -q $SERVICE_PHP_NAME)` 
         docker-compose exec -T $SERVICE_PHP_NAME $BIN_DIR/phpstan analyse --configuration=phpstan.neon.dist --error-format=raw --autoload-file=vendor/autoload.php $SFILES
         if [ $? != 0 ]
         then
-            echo "Fix the error before commit!"
-            echo "Run"
-            echo "docker-compose exec -T $SERVICE_PHP_NAME $BIN_DIR/phpstan analyse --configuration=phpstan.neon.dist --error-format=raw --autoload-file=vendor/autoload.php $SFILES"
-            echo "for automatic fix or fix it manually."
+
+            echo "\nFix the error before commit!"
+            echo "      乁| ･ิ ∧ ･ิ |ㄏ"
             exit 1
         fi
     fi
@@ -75,6 +75,13 @@ else
         echo "Commit stopped"
         exit 1
     fi
+
+
+echo "\n************************************************"
+echo "Everything looks ok, great work!!!\n"
+
+echo "Commiting ... "
+echo "ᕕ( ՞ ᗜ ՞ )ᕗ \n"
 
 fi
 
